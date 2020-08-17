@@ -3,22 +3,16 @@ const express = require("express");
 
 const router = express.Router();
 
-// Root dir:
-const rootDir = require("../util/path");
-// to use products variable
-const adminData = require("./admin");
+const shopsController = require("../controllers/shop-controller");
 // Routes
-router.get("/", (req, res, next) => {
-    console.log('shop:', adminData.products);
-    const products = adminData.products;
-    res.render('shop', {
-        prods: products,
-        pageTitle: 'shop',
-        path:'/',
-        hasProducts: products.length>0,
-        activeShop: true,
-        productsCSS: true,
-    })
-});
+router.get("/", shopsController.getIndex);
+
+router.get("/products", shopsController.getProducts);
+router.get("/products/:productId", shopsController.getProduct);
+router.get("/cart", shopsController.getCart);
+router.post("/cart", shopsController.postCart);
+router.post("/cart-delete-item", shopsController.postCartDelete)
+router.get("/order", shopsController.getOrders);
+router.get("/checkout", shopsController.getCheckout);
 
 module.exports = router;
