@@ -3,8 +3,10 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const userSchema = new Schema({
-  name: { type: String, required: true },
   email: { type: String, required: true },
+  password: { type: String, required: true },
+  resetToken: { type: String, required: false },
+  resetTokenExpiration: { type: Date, required: false },
   cart: {
     items: [
       {
@@ -53,6 +55,10 @@ userSchema.methods.removeFromCart = function (productId) {
   this.cart.items = updatedCartItems;
   return this.save();
 };
+userSchema.methods.clearCart = function () {
+  this.cart = { items: [] };
+  return this.save();
+};
 
 module.exports = mongoose.model("User", userSchema);
 
@@ -85,7 +91,7 @@ module.exports = mongoose.model("User", userSchema);
 //     const updatedCartItems = [...this.cart.items];
 
 //     if (cartProductIndex >= 0) {
-//       newQuantity = this.cart.items[cartProductIndex].quantity + 1;
+//       newQuantity = this.cart.items[cartProductIfndex].quantity + 1;
 //       updatedCartItems[cartProductIndex].quantity = newQuantity;
 //     } else {
 //       updatedCartItems.push({

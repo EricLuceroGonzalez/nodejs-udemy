@@ -9,13 +9,36 @@ const products = [];
 
 // The routes:
 // implement the middleware 'use' that receive al incoming requests
+// Handle the authorization and routes with /middleware/is-auth
+const isAuth = require("../middleware/is-auth");
+const { body } = require("express-validator");
 
-router.get("/products", adminController.getProducts);
-router.get("/add-product", adminController.getAddProduct);
-router.post("/add-product", adminController.postAddProduct);
-router.get("/edit-product/:productId", adminController.getEditProduct);
-router.post("/edit-product", adminController.postEditProduct);
-router.post("/delete-product", adminController.postDeleteProduct);
+router.get("/products", isAuth, adminController.getProducts);
+router.get("/add-product", isAuth, adminController.getAddProduct);
+router.post(
+  "/add-product",
+  [
+    body("title").isString().isLength({ min: 3 }).trim(),
+    body("price").isFloat(),
+    body("imageUrl").isURL(),
+    body("description").isLength({ min: 5, max: 200 }).trim(),
+  ],
+  isAuth,
+  adminController.postAddProduct
+);
+router.get("/edit-product/:productId", isAuth, adminController.getEditProduct);
+router.post(
+  "/edit-product",
+  [
+    body("title").isString().isLength({ min: 3 }).trim(),
+    body("price", "Prices is not valid").isFloat(),
+    body("imageUrl").isURL(),
+    body("description").isLength({ min: 5, max: 200 }).trim(),
+  ],
+  isAuth,
+  adminController.postEditProduct
+);
+router.post("/delete-product", isAuth, adminController.postDeleteProduct);
 
 exports.routes = router;
 exports.products = products;
